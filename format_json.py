@@ -5,22 +5,18 @@ Script to format or unformat JSON files.
 """
 
 import argparse
-import os
+import common
 import json
 import logging
-import sys
 import typing
 
-sys.path.append(os.path.dirname(__file__))
-
-import common
 
 log = logging.getLogger(__name__)
 
 
 class Config(typing.NamedTuple):
     file: str
-    prettify: bool
+    minify: bool
 
 
 def get_data(fpath):
@@ -32,12 +28,13 @@ def get_data(fpath):
 def run(cfg: Config):
     fpath = cfg.file
     data = get_data(fpath)
-    log.info(f"writing data to {fpath}...")
     with open(fpath, "w") as outfile:
-        if cfg.prettify:
-            json.dump(data, outfile, ensure_ascii=False, indent=4)
-        else:
+        if cfg.minify:
+            log.info(f"writing minified JSON to {fpath}...")
             json.dump(data, outfile, ensure_ascii=False)
+        else:
+            log.info(f"writing prettified JSON to {fpath}...")
+            json.dump(data, outfile, ensure_ascii=False, indent=4)
     log.info("done")
 
 
@@ -49,8 +46,8 @@ def handle_command_line():
                         type=str, help="path to csv file",
                         default=None)
 
-    parser.add_argument("-p", "--prettify",
-                        help="write prettified JSON",
+    parser.add_argument("-m", "--minify",
+                        help="write JSON without whitespace",
                         action="store_true")
 
     args = parser.parse_args()
