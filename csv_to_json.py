@@ -10,6 +10,7 @@ import csv
 import json
 import logging
 import os
+import common
 
 
 log = logging.getLogger(__name__)
@@ -18,16 +19,6 @@ log = logging.getLogger(__name__)
 Config = collections.namedtuple('Config', [
     'file'
 ])
-
-
-class ScriptException(Exception):
-    """Custom exception class with message for this module."""
-
-    def __init__(self, value):
-        self.value = value
-
-    def __repr__(self):
-        return repr(self.value)
 
 
 class Controller(object):
@@ -39,10 +30,10 @@ class Controller(object):
     def run(self):
         fpath = self.config.file
         if not os.path.isfile(fpath):
-            raise ScriptException(f"invalid path: {fpath}")
+            raise common.ScriptException(f"invalid path: {fpath}")
 
         if not fpath.endswith(".csv"):
-            raise ScriptException(f"file should be csv: {fpath}")
+            raise common.ScriptException(f"file should be csv: {fpath}")
 
         log.info(f"reading rows from {fpath}")
         rows = []
@@ -78,7 +69,7 @@ def main():
         config = handle_command_line()
         controller = Controller(config)
         controller.run()
-    except ScriptException as se:
+    except common.ScriptException as se:
         log.error(se)
 
 
