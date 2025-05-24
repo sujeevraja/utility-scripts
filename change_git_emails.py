@@ -53,8 +53,15 @@ def main():
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="""
 Examples:
-  %(prog)s -r /path/to/repo -o old@email.com -n new@email.com  # Change email in specific repo
-  %(prog)s -o old@email.com -n new@email.com                  # Change email in current repo
+
+  # Change email in specific repo
+  %(prog)s -r /path/to/repo -o old@email.com -n new@email.com
+
+  # Change email in current repo
+  %(prog)s -o old@email.com -n new@email.com
+
+  # Change both email and name
+  %(prog)s -o old@email.com -n new@email.com -N "New Name"
 
 Note: This script requires git-filter-repo to be installed
       Install with: pip3 install git-filter-repo
@@ -64,8 +71,8 @@ Note: This script requires git-filter-repo to be installed
                           help='Path to the Git repository (default: current directory)')
         parser.add_argument('-o', '--old-email', required=True,
                           help='Old email address to replace')
-        parser.add_argument('-n', '--new-email', required=True,
-                          help='New email address to use')
+        parser.add_argument('-n', '--new-email', required=False, default='6365621+sujeevraja@users.noreply.github.com',
+                          help='New email address to use (default: 6365621+sujeevraja@users.noreply.github.com)')
         parser.add_argument('-N', '--new-name', default=None,
                           help='New name to use (optional)')
         args = parser.parse_args()
@@ -117,7 +124,6 @@ Note: This script requires git-filter-repo to be installed
         # Build the git filter-repo command
         cmd = ['git', '-C', str(repo_path), 'filter-repo',
                '--email-callback', f"return b'{new_email}' if email == b'{old_email}' else email",
-               '--preserve-refs',  # Preserve remote references
                '--force']
 
         # Add name change if specified
