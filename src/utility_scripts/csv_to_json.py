@@ -10,7 +10,7 @@ import csv
 import json
 import logging
 import os
-import common
+from . import common
 
 
 log = logging.getLogger(__name__)

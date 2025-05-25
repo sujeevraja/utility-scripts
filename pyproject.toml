@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "utility-scripts"
+version = "0.1.0"
+description = "A collection of utility scripts for common tasks"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+packages = [{include = "utility_scripts", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+git-filter-repo = "^2.38.0"
+
+[tool.poetry.scripts]
+csv-to-json = "utility_scripts.csv_to_json:main"
+format-json = "utility_scripts.format_json:main"
+scrub-git-file = "utility_scripts.scrub_file_from_git_history:main"
+change-git-email = "utility_scripts.change_git_emails:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api" 

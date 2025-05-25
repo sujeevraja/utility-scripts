@@ -4,6 +4,7 @@ import argparse
 import os
 import subprocess
 import sys
+import shutil
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Replace all Git commit emails in a repo.",
@@ -22,25 +23,38 @@ def verify_git_repo(repo_path):
         sys.exit(f"Error: '{repo_path}' is not a valid directory.")
     if not os.path.isdir(os.path.join(repo_path, '.git')):
         sys.exit(f"Error: '{repo_path}' is not a Git repository.")
+    
+    # Check if git-filter-repo is installed
+    if not shutil.which('git-filter-repo'):
+        sys.exit("Error: git-filter-repo is not installed. Please install it first:\n"
+                "pip3 install git-filter-repo")
 
 def rewrite_git_history(repo_path, old_email, new_email):
-    script = f"""
-    git filter-branch --env-filter '
-    if [ "$GIT_COMMITTER_EMAIL" = "{old_email}" ]
-    then
-        export GIT_COMMITTER_EMAIL="{new_email}"
-    fi
-    if [ "$GIT_AUTHOR_EMAIL" = "{old_email}" ]
-    then
-        export GIT_AUTHOR_EMAIL="{new_email}"
-    fi
-    ' --tag-name-filter cat -- --branches --tags
-    """
     try:
-        subprocess.run(script, cwd=repo_path, shell=True, check=True, executable='/bin/bash')
+        # Create a backup of the repository
+        backup_path = f"{repo_path}_backup"
+        if os.path.exists(backup_path):
+            sys.exit(f"Error: Backup directory '{backup_path}' already exists. Please remove it first.")
+        
+        print(f"Creating backup at {backup_path}...")
+        shutil.copytree(repo_path, backup_path)
+        
+        # Run git-filter-repo to rewrite the history
+        cmd = [
+            'git-filter-repo',
+            '--email-callback',
+            f'return email.replace("{old_email}", "{new_email}")',
+            '--force'
+        ]
+        
+        subprocess.run(cmd, cwd=repo_path, check=True)
         print("Git history successfully rewritten.")
+        print(f"Original repository backed up at: {backup_path}")
+        
     except subprocess.CalledProcessError as e:
         sys.exit(f"Error while rewriting Git history: {e}")
+    except Exception as e:
+        sys.exit(f"Error: {e}")
 
 def main():
     args = parse_args()

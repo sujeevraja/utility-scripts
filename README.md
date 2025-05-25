@@ -4,50 +4,67 @@ A collection of utility scripts for common tasks.
 
 ## Prerequisites
 
-- Python 3.x
+- Python 3.8 or higher
+- Poetry (Python package manager)
 - Git (for Git-related scripts)
-- git-filter-repo (for Git history modification scripts)
-  ```bash
-  pip3 install git-filter-repo
-  ```
+
+## Installation
+
+1. Install Poetry (if not already installed):
+   ```bash
+   curl -sSL https://install.python-poetry.org | python3 -
+   ```
+
+2. Clone this repository:
+   ```bash
+   git clone <repository-url>
+   cd utility-scripts
+   ```
+
+3. Install dependencies using Poetry:
+   ```bash
+   poetry install
+   ```
+
+4. Activate the virtual environment:
+   ```bash
+   poetry shell
+   ```
 
 ## Scripts
 
 ### Git History Management
 
-#### scrub_file_from_git_history.py
+#### scrub-git-file
 Removes a file from Git history across all branches while preserving remote references.
 
 ```bash
 # Basic usage (current directory)
-./scrub_file_from_git_history.py sensitive/password.txt
+poetry run scrub-git-file sensitive/password.txt
 
 # Specify a different repository
-./scrub_file_from_git_history.py -r /path/to/repo sensitive/password.txt
+poetry run scrub-git-file -r /path/to/repo sensitive/password.txt
 ```
 
-#### change_git_emails.py
+#### change-git-email
 Changes email addresses in Git commit history across all branches while preserving remote references.
 
 ```bash
 # Change email in current repository
-./change_git_emails.py -o old@email.com -n new@email.com
+poetry run change-git-email -o old@email.com -n new@email.com
 
 # Change email in specific repository
-./change_git_emails.py -r /path/to/repo -o old@email.com -n new@email.com
-
-# Change both email and name
-./change_git_emails.py -o old@email.com -n new@email.com -N "New Name"
+poetry run change-git-email -r /path/to/repo -o old@email.com -n new@email.com
 ```
 
 ### File Format Conversion
 
-#### csv_to_json.py
+#### csv-to-json
 Converts CSV files to JSON format.
 
 ```bash
 # Convert a CSV file to JSON
-./csv_to_json.py -f data.csv
+poetry run csv-to-json -f data.csv
 ```
 
 The script will:
@@ -57,15 +74,27 @@ The script will:
 - Preserve column headers as keys
 - Strip whitespace from values
 
-#### format_json.py
+#### format-json
 Formats or minifies JSON files.
 
 ```bash
 # Pretty print JSON file
-./format_json.py -f data.json
+poetry run format-json -f data.json
 
 # Minify JSON file
-./format_json.py -f data.json -m
+poetry run format-json -f data.json -m
+```
+
+## Development
+
+To add new dependencies:
+```bash
+poetry add package-name
+```
+
+To add development dependencies:
+```bash
+poetry add --group dev package-name
 ```
 
 ## Common Features

@@ -6,7 +6,7 @@ import subprocess
 import argparse
 from datetime import datetime
 from pathlib import Path
-from common import ScriptException
+from .common import ScriptException
 
 def run_command(cmd, check=True):
     """Run a shell command and return its output."""

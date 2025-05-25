@@ -5,7 +5,7 @@ Script to format or unformat JSON files.
 """
 
 import argparse
-import common
+from . import common
 import json
 import logging
 import typing
